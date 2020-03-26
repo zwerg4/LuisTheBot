@@ -70,7 +70,7 @@ async def watten(ctx, befehl, *args):
         anzahl_gruppen += 1
         gruppen_namen.append(args[0])
         gruppen_punkte.append(0)
-        await ctx.send("Neue Gruppe " + gruppen_namen[-1] + ": WICHTIG!! GRUPPENNUMMER >> " + str(anzahl_gruppen) + " <<")
+        await ctx.send("Neue Gruppe **" + gruppen_namen[-1] + "**: WICHTIG!! GRUPPENNUMMER >> **" + str(anzahl_gruppen) + "** <<")
         return
       else:
         await ctx.send("befehl: -watten teamadd <teamname>")
@@ -97,6 +97,8 @@ async def watten(ctx, befehl, *args):
       runde += 1
       max_runde = math.floor(anzahl_gruppen / 2)
       runden_gleichzeitig = anzahl_gruppen / max_runde
+      
+
       await ctx.send("-- RUNDE " + str(runde) + " ---")
       for i in range(0,int(runden_gleichzeitig)):
         await ctx.send("** " +  gruppen_namen[spiele[i][0]] + " : " + gruppen_namen[spiele[i][1]])
@@ -123,16 +125,16 @@ async def watten(ctx, befehl, *args):
       return
 
     if befehl == "tabelle":
-      await ctx.send("------- PUNKTE -------")
+      text = " -------- **PUNKTE** --------\n"
+  #    await ctx.send("------- PUNKTE -------")
       for i in range(0,anzahl_gruppen):
-        await ctx.send("Gr[" + str(i + 1) + "] " + gruppen_namen[i] + " Punkte: " + str(gruppen_punkte[i]))
+        text += "Gr[" + str(i + 1) + "] " + gruppen_namen[i] + " Punkte: " + str(gruppen_punkte[i])+ "\n"
+      await ctx.send(text)
       return
 
     if befehl == "help":
-      await ctx.send("commands:\n-watten\n   -help\n   -teamadd <teamname>\n   -ergebnis <Nr. Gr 1> <Nr. Gr 2> <Punkte Gr 1> <Punkte Gr 2>\n   -start\n   -tabelle\n   -reset\n   -neuesspiel\n")
+      await ctx.send("*commands:*\n-watten\n   -help\n   -teamadd <teamname>\n   -ergebnis <Nr. Gr 1> <Nr. Gr 2> <Punkte Gr 1> <Punkte Gr 2>\n   -start\n   -tabelle\n   -reset\n   -neuesspiel\n")
       return
-
-  
 
 
 @bot.command()

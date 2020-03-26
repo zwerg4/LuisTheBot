@@ -11,3 +11,5 @@ def run():
 def keep_alive():
     t = Thread(target=run)
     t.start()
+
+#Thread(target=app.run,args=("0.0.0.0",8080)).start()
