@@ -20,7 +20,11 @@ spiele = []
 runde = 0
 max_runde = 0
 runden_gleichzeitig = 0
+ls = []
 
+
+def rotate(l, x):
+  return l[-x:] + l[:-x]
 
 
 ##EVENTS##
@@ -65,6 +69,7 @@ async def watten(ctx, befehl, *args):
     global max_runde
     global spiele
     global runden_gleichzeitig
+    global ls
     if befehl == "teamadd":
       if len(args) == 1 :
         anzahl_gruppen += 1
@@ -75,7 +80,22 @@ async def watten(ctx, befehl, *args):
       else:
         await ctx.send("befehl: -watten teamadd <teamname>")
         return
-      
+
+    if befehl == "test":
+      anzahl_gruppen += 5
+      gruppen_namen.append("DieOanser")
+      gruppen_namen.append("DieZwoaer")
+      gruppen_namen.append("DieDreier")
+      gruppen_namen.append("DieVierer")
+      gruppen_namen.append("DieFuenfer")
+      gruppen_punkte.append(0)
+      gruppen_punkte.append(0)
+      gruppen_punkte.append(0)  
+      gruppen_punkte.append(0)
+      gruppen_punkte.append(0)  
+      await ctx.send("5 Test Teams hinzugefügt")
+
+
     if befehl == "ergebnis":
       if len(args):
         if int(args[2]) > int(args[3]):
@@ -90,31 +110,60 @@ async def watten(ctx, befehl, *args):
 
     if befehl == "start":
       ls = list(range(1,anzahl_gruppen+1))
+      if len(ls) % 2 != 0:
+        ls.append(0)
       print(ls)
-      spiele = list(combinations(ls, 2))
-      print(spiele)
-    
       runde += 1
       max_runde = math.floor(anzahl_gruppen / 2)
-      runden_gleichzeitig = anzahl_gruppen / max_runde
-      
-
-      await ctx.send("-- RUNDE " + str(runde) + " ---")
-      for i in range(0,int(runden_gleichzeitig)):
-        await ctx.send("** " +  gruppen_namen[spiele[i][0]] + " : " + gruppen_namen[spiele[i][1]])
-      return
+      runden_gleichzeitig = len(ls) / 2
+      text = " -------- :shamrock: :heart:  **RUNDE " + str(runde) + " **  :chestnut: :new_moon: -------- \n"
+      for counter in range(0,int(runden_gleichzeitig)):
+        print("counter : "+ str(counter) + "len ln: " + str(len(ls)))
+        if ls[counter] == 0:
+          text += " ~ " +  gruppen_namen[ls[- 1 - counter] - 1] + " hat Spielfrei! \n"
+          print(1)
+        elif ls[-1 - counter] == 0:
+          text += " ~ " +  gruppen_namen[ls[counter] - 1] + " hat Spielfrei! \n"
+          print(2)
+        else:
+          text += " ~ " +  gruppen_namen[ls[counter] -1] + " : " + gruppen_namen[ls[-1 - counter] - 1] + "\n"
+          print(3)
+      await ctx.send(text)
+      return  
 
     if befehl == "next":
+      print(ls)
       runde += 1
-      await ctx.send("-- RUNDE " + str(runde) + " ---")
-      for i in range(0,int(runden_gleichzeitig)):
-        await ctx.send("** " +  gruppen_namen[spiele[i * runde][0]] + " : " + gruppen_namen[spiele[i * runde][1]])
-      return
+      max_runde = math.floor(anzahl_gruppen / 2)
+      ls.pop(0)
+      print(ls)
+      ls = rotate(ls,1)
+      print(ls)
+      ls2 = [1]
+      ls2.extend(ls)
+      print(ls2)
+      runden_gleichzeitig = len(ls2) / 2
+      text = " -------- :shamrock: :heart:  **RUNDE " + str(runde) + " **  :chestnut: :new_moon: -------- \n"
+      for counter in range(0,int(runden_gleichzeitig)):
+        print("counter : "+ str(counter) + "len ln: " + str(len(ls2)))
+        if ls2[counter] == 0:
+          text += " ~ " +  gruppen_namen[ls2[- 1 - counter] - 1] + " hat Spielfrei! \n"
+          print(1)
+        elif ls2[-1 - counter] == 0:
+          text += " ~ " +  gruppen_namen[ls2[counter] - 1] + " hat Spielfrei! \n"
+          print(2)
+        else:
+          text += " ~ " +  gruppen_namen[ls2[counter] -1] + " : " + gruppen_namen[ls2[-1 - counter] - 1] + "\n"
+          print(3)
+      await ctx.send(text)
+      ls = ls2
+      return  
 
     if befehl == "reset":
       anzahl_gruppen = 0
       gruppen_namen = []
       gruppen_punkte = []
+      runde = 0
       await ctx.send("Spiel und Gruppen wurden zurückgesetzt!")
       return
 
@@ -122,6 +171,7 @@ async def watten(ctx, befehl, *args):
       for i in range(0,anzahl_gruppen):
         gruppen_punkte[i] = 0
         await ctx.send("Spiel wurden zurückgesetzt!")
+      runde = 0
       return
 
     if befehl == "tabelle":
@@ -136,11 +186,9 @@ async def watten(ctx, befehl, *args):
       await ctx.send("*commands:*\n-watten\n   -help\n   -teamadd <teamname>\n   -ergebnis <Nr. Gr 1> <Nr. Gr 2> <Punkte Gr 1> <Punkte Gr 2>\n   -start\n   -tabelle\n   -reset\n   -neuesspiel\n")
       return
 
-
 @bot.command()
 async def test(ctx):
     await ctx.send("something")
 token = os.environ.get("DISCORD_BOT_SECRET")
 keep_alive()
 bot.run(token)
-
