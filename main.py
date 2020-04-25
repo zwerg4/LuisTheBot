@@ -1,21 +1,23 @@
-import discord, flask_server
+import discord #, flask_server
 import math
 import os
+import random
 from itertools import combinations
 from discord.ext import commands
-from flask_server import keep_alive
+#from flask_server import keep_alive
 
 bot = commands.Bot(command_prefix='-', description='best BOT EUW !')
 
 likereactions = ['👍','👎']
 pollreactions = ['👍','👎']
 gayreactions = ['🇮','🇲','🇬', '🇦', '🇾']
-gaycandidates = [336588827760132096, 336953197924974595, 337258187751161857, 349635204106944514, 233677953463091200, 280329030715310080, 336574818826715138, 188286395238973440]
+#gaycandidates = [336588827760132096, 336953197924974595, 337258187751161857, 349635204106944514, 233677953463091200, 280329030715310080, 336574818826715138, 188286395238973440]
 
 
 anzahl_gruppen = 0
 gruppen_namen = []
 gruppen_punkte = []
+gruppen_punkte_gesamt = []
 spiele = []
 runde = 0
 max_runde = 0
@@ -65,15 +67,19 @@ async def watten(ctx, befehl, *args):
     global anzahl_gruppen
     global gruppen_namen
     global gruppen_punkte
+    global gruppen_punkte_gesamt
     global runde
     global max_runde
     global spiele
     global runden_gleichzeitig
     global ls
+    global rand_teams_bool
+    global rand_users
     if befehl == "teamadd":
       if len(args) == 1 :
         anzahl_gruppen += 1
         gruppen_namen.append(args[0])
+        gruppen_punkte_gesamt.append(0)
         gruppen_punkte.append(0)
         await ctx.send("Neue Gruppe **" + gruppen_namen[-1] + "**: WICHTIG!! GRUPPENNUMMER >> **" + str(anzahl_gruppen) + "** <<")
         return
@@ -92,7 +98,12 @@ async def watten(ctx, befehl, *args):
       gruppen_punkte.append(0)
       gruppen_punkte.append(0)  
       gruppen_punkte.append(0)
-      gruppen_punkte.append(0)  
+      gruppen_punkte.append(0)
+      gruppen_punkte_gesamt.append(0)
+      gruppen_punkte_gesamt.append(0)
+      gruppen_punkte_gesamt.append(0)
+      gruppen_punkte_gesamt.append(0)
+      gruppen_punkte_gesamt.append(0)
       await ctx.send("5 Test Teams hinzugefügt")
 
 
@@ -104,6 +115,8 @@ async def watten(ctx, befehl, *args):
         if int(args[2]) < int(args[3]): 
           gruppen_punkte[int(args[1]) - 1] += 1
           await ctx.send("G"+ str(args[1]) + ":"+ gruppen_namen[int(args[1]) - 1]+" wurde als Gewinner eingetragen! Good Job")
+        gruppen_punkte_gesamt[int(args[0]) - 1] += int(args[2])
+        gruppen_punkte_gesamt[int(args[1]) - 1] += int(args[3])
       else:
         await ctx.send("befehl: -watten ergebnis <Nr. Gr 1> <Nr. Gr 2> <Punkte Gr 1> <Punkte Gr 2>")
         return
@@ -175,12 +188,49 @@ async def watten(ctx, befehl, *args):
       return
 
     if befehl == "tabelle":
-      text = " -------- **PUNKTE** --------\n"
-  #    await ctx.send("------- PUNKTE -------")
-      for i in range(0,anzahl_gruppen):
-        text += "Gr[" + str(i + 1) + "] " + gruppen_namen[i] + " Punkte: " + str(gruppen_punkte[i])+ "\n"
-      await ctx.send(text)
-      return
+       text = " -------- :shamrock: :heart:  **PUNKTE " + str(runde) + " **  :chestnut: :new_moon: -------- \n"
+       #    await ctx.send("------- PUNKTE -------")
+       for i in range(0, anzahl_gruppen):
+           text += "Gr[" + str(i + 1) + "] " + gruppen_namen[i] + " Punkte: " + str(gruppen_punkte[i]) + " / " + str(
+              gruppen_punkte_gesamt[i]) + "\n"
+       await ctx.send(text)
+       #embed = discord.Embed(description=text, color=0x049323, )
+       #await ctx.send(embed=embed)
+       return
+
+    if befehl == "randomteams":
+        if len(args):
+            print(args[0])
+            if args[0] == "start":
+                rand_teams_bool = True
+                rand_users = []
+                await ctx.send("Spielermeldung gestartet!! Melde dich mit **-watten join** an\n")
+            elif args[0] == "end":
+                if len(rand_users) % 2 == 0:
+                    while len(rand_users) > 1:
+                        # Using the randomly created indices, respective elements are popped out
+                        r1 = random.randrange(0, len(rand_users))
+                        elem1 = rand_users.pop(r1)
+                        r2 = random.randrange(0, len(rand_users))
+                        elem2 = rand_users.pop(r2)
+
+                        anzahl_gruppen += 1
+                        gruppen_namen.append(elem1[0:2]+elem2[0:2])
+                        gruppen_punkte.append(0)
+                        await ctx.send(discord.Embed(title="Teams: ",description='Team: ' + elem1[0:2]+elem2[0:2] + " | " +elem1[:-5]+ " + @"+elem2[:-5]+ "\n" , color=0xffffff))
+                else:
+                    await ctx.send("Es wird noch ein Spieler gebraucht um Teams zu machen\n")
+            else:
+                await ctx.send("-watten help for all commands!\n")
+        else:
+            await ctx.send("-watten help for all commands!\n")
+        return
+
+    if befehl == "join":
+        if rand_teams_bool == True:
+            await ctx.send("Spieler " + str(ctx.author) +" angemeldet\n")
+            rand_users.append(str(ctx.author))
+        return
 
     if befehl == "help":
       await ctx.send("*commands:*\n-watten\n   -help\n   -teamadd <teamname>\n   -ergebnis <Nr. Gr 1> <Nr. Gr 2> <Punkte Gr 1> <Punkte Gr 2>\n   -start\n   -tabelle\n   -reset\n   -neuesspiel\n")
@@ -189,6 +239,6 @@ async def watten(ctx, befehl, *args):
 @bot.command()
 async def test(ctx):
     await ctx.send("something")
-token = os.environ.get("DISCORD_BOT_SECRET")
-keep_alive()
-bot.run(token)
+#token = os.environ.get("DISCORD_BOT_SECRET")
+#keep_alive()
+bot.run("NjkyMDA2ODAzMTM1MDA0NzYy.XnoSsQ.JK6jJfTKP1Kt_iTQQ02vkMPR2Pw")
