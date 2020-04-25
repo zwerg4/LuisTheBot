@@ -240,5 +240,5 @@ async def watten(ctx, befehl, *args):
 async def test(ctx):
     await ctx.send("something")
 #token = os.environ.get("DISCORD_BOT_SECRET")
+bot.run("TOKEN")
 #keep_alive()
-bot.run("NjkyMDA2ODAzMTM1MDA0NzYy.XnoSsQ.JK6jJfTKP1Kt_iTQQ02vkMPR2Pw")
