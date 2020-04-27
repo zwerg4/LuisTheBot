@@ -8,11 +8,6 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix='-', description='best BOT EUW !')
 
-likereactions = ['👍','👎']
-pollreactions = ['👍','👎']
-gayreactions = ['🇮','🇲','🇬', '🇦', '🇾']
-#gaycandidates = [336588827760132096, 336953197924974595, 337258187751161857, 349635204106944514, 233677953463091200, 280329030715310080, 336574818826715138, 188286395238973440]
-
 
 anzahl_gruppen = 0
 gruppen_namen = []
@@ -48,17 +43,6 @@ async def like(ctx):
     sendmsg = await ctx.send("Do you like this Server? ")
     for emoji in likereactions:
       await sendmsg.add_reaction(emoji)
-
-@bot.command()
-async def poll(ctx, poll_message):
-    """| Start a poll | usage: !poll (message you want to ask)"""
-    if poll_message is not None:
-      sendpollmsg = await ctx.send(f"{ctx.author} started a poll: {poll_message}")
-      for emoji in pollreactions:
-        await sendpollmsg.add_reaction(emoji)
-    else:
-      await ctx.send("usage: !poll (message you want to ask)")
-      return
 
 
 @bot.command()
@@ -240,5 +224,5 @@ async def watten(ctx, befehl, *args):
 async def test(ctx):
     await ctx.send("something")
 #token = os.environ.get("DISCORD_BOT_SECRET")
-bot.run("TOKEN")
+bot.run("NjkyMDA2ODAzMTM1MDA0NzYy.XqR1iA.tEfnbMmQh6Xp_vvu_tbumodY1eE")
 #keep_alive()
