@@ -1,6 +1,9 @@
 import discord #, flask_server
 import math
+
 import os
+#From dotenv import load_dotenv
+
 import random
 from itertools import combinations
 from discord.ext import commands
@@ -36,13 +39,6 @@ async def on_ready():
 async def ping(ctx):
     """| Pong!"""
     await ctx.send("Pong!")
-
-@bot.command()
-async def like(ctx):
-    """| questions if you like the Server"""
-    sendmsg = await ctx.send("Do you like this Server? ")
-    for emoji in likereactions:
-      await sendmsg.add_reaction(emoji)
 
 
 @bot.command()
@@ -223,6 +219,8 @@ async def watten(ctx, befehl, *args):
 @bot.command()
 async def test(ctx):
     await ctx.send("something")
-#token = os.environ.get("DISCORD_BOT_SECRET")
-bot.run("NjkyMDA2ODAzMTM1MDA0NzYy.XqR1iA.tEfnbMmQh6Xp_vvu_tbumodY1eE")
+
+#token = os.environ.get('DISCORD_BOT_SECRET')
+#print(token)
+bot.run('token')
 #keep_alive()
